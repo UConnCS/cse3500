@@ -9,3 +9,5 @@
 *.fls
 *.out
 venv/
+_minted-report
+__pycache__
