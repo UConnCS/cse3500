@@ -9,14 +9,22 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{listings}
-\usepackage{hyperref}
+\usepackage{hyperref}  
+\usepackage{tikz}      
+\usepackage{pgf}
 
-\hypersetup{%
-  colorlinks=true,
-  linkcolor=blue,
-  linkbordercolor={0 0 1}
+\usepackage[scaled=0.85]{FiraMono}
+
+\usetikzlibrary{arrows, automata}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    linkbordercolor={0 0 1}
 }
  
+\newtheorem*{thm}{Theorem}
+
 \renewcommand\lstlistingname{Algorithm}
 \renewcommand\lstlistlistingname{Algorithms}
 \def\lstlistingautorefname{Alg.}
@@ -37,8 +45,8 @@
 
 % Edit these as appropriate
 \newcommand\course{CSE 3500}
-\newcommand\hwnumber{3}                  % <-- homework number
-\newcommand\NetIDa{mfm19005}           % <-- NetID of person #1
+\newcommand\hwnumber{2}
+\newcommand\NetIDa{mfm19005}
 
 \pagestyle{fancyplain}
 \headheight 35pt
@@ -50,146 +58,70 @@
 \rfoot{\small\thepage}
 \headsep 1.5em
 
-\newtheorem*{thm}{Theorem}
-
 \begin{document}
 
 \begin{center}
     \LARGE Problem Set
 \end{center}
 
-
-\section*{Problem 0 -- Dynamic Programming (25\%)}
-Zoe starts at the top left corner of an $n \times n$ square grid of numbers and must end at the bottom right corner.
-The numbers can be positive or negative. 
-At each step, Zoe can go left, right, or down (but not up), and she can never revisit a square that she has already visited. 
-Find an $O(n^2)$ algorithm to find the maximum sum of numbers Zoe can visit.\\
-
-\par\noindent\rule{\textwidth}{0.4pt}
-
-$\hfill \break$
-An $O(n^2)$ algorithm that models this problem utilizes memoization in order to avoid repeated iterations. This algorithm uses a double for-loop in order to fill out an $n \times n$ table in which $T[i][j]$ represents the number of possible move directions that can be taken, given the conditions specified in the problem statement. Further, the algorithm iterates over all of the columns, except for the last one since the only possible move would be moving down for the last column.
-
-$\hfill \break$
-With this, we can iterate down each of the rows in order to compute the number of possible directions for each tile. This can be done by summing the number of possible directions for the tile to the right of the current one, and the tile below the current one. We can do this by going from the bottom up, and assembling the rows one by one. In this case, the bottom row must be all ones, since you can only go right in order to reach the goal - likewise, we can assemble upwards and use that bottom row in order to compute the row above it, and then set the ``below" row to the current row when moving up a level.
-
-$\hfill \break$
-Once the entire table is filled, we can iterate through and compute the maximum sum of numbers that Zoe can visit. This can be done by iterating through the table and summing the numbers in the table, and then comparing the sum to the current maximum sum. If the sum is greater than the current maximum sum, then we can set the maximum sum to the current sum.
-
-$\hfill \break$
-All of these operations will constitute the $O(n^2)$ we are looking for, as the initial construction of the table will cost $O(n^2)$ time, and the computation of the maximum sum will cost $O(n)$ time. Thus, the total time complexity will be $O(n^2)$.
+\section*{Problem 0}
+\begin{center}
+    \scalebox{0.455}{\includegraphics{problem0.png}}
+\end{center}
 
 \newpage
-
-\section*{Problem 1 -- Divide and Conquer (25\%)}
-A mad scientist accidentally left her cloning machine on and open while vacationing in Storrs, Connecticut.
-While she was away, a murder of crows managed to get inside her office and use the cloning machine.
-The mad scientist returned from her vacation surprised to have her office full of crows, but excited to test a new hypothesis.
-As is well known, crows are very intelligent birds, and the scientist suspects that one or more crows may have taken advantage of the cloning machine to gain a selective genetic advantage.
-
-We say that two crows are \textit{identical} if we genetically sequence the crows and their DNA is 99.99\% identical.
-The mad scientist has a machine that will determine whether or not two crows are genetically identical, but it is costly to operate so she wants to minimize its use.
-
-The only operation you are allowed to perform is to take two crows and determine if they are genetically identical.
-Develop an $O(n \log n)$ algorithm that, given $n$ crows, determines if there is a set of more than $n/2$ crows that are genetically identical.
-
-\par\noindent\rule{\textwidth}{0.4pt}
-
-An $O(nlogn)$ equation that models this problem would be a derivation of merge sort, in that we can consider the set of all crows, $\mathbb{C}$, an array of sorts, and the crows being elements in that array. We can then split the array in half until we are left with arrays of two elements. This is one level above the normal terminating-point of a typical merge-sort algorithm. When we are left with two elements per list, we can compare all of the pairs on the final level of the recursive tree, and as such determine if there is a majority by checking for matching pairs.
+\section*{Problem 1}
+You are given a $2^k * 2^k$ board of squares (e.g. a chess board) with the top left square removed. Prove, by giving a divide-and-conquer algorithm or argument, that you can exactly cover the entire board with L-shaped pieces (each covering 3 squares).
 
 $\hfill \break$
-By executing this process recursively back up the tree, we are able to determine if the set of $\frac{n}{2}$ genetically identical crows exists for a given sample set. As such, the splitting-aspect of this algorithm constitutes the $O(logn)$ component of the final runtime, and the merging aspect of the algorithm constitutes the $O(n)$ component of the final runtime. Thus, the final runtime of this algorithm is $O(nlogn)$ as $n$ operations must run for each of the $log(n)$ levels.  
+We can feasibly show that any $2^k * 2^k$ chess board, with it's top left square removed can be filled by L-shaped pieces by defining an adequate base-case, and further by developing a strategy to traverse the board.
 
-\newpage
+$\hfill \break$
+Given this chess board, we can see that there are $(2^k * 2^k) - 1$ remaining pieces after removing the top-left piece. With this in mind, we can setup a base-case where $k = 1$, giving us a $2 * 2$ board. In this case, we can see that there are 3 remaining pieces, and thus we can fill the board with a singular L-shaped piece, in the only position it will fit.
 
-\section*{Problem 2 -- SillySort (25\%)}
+$\hfill \break$
+Now that we have a base-case setup, we can think about how we will split this board into smaller subproblems. Since this board will always have an even number of squares, we can split it into 4 equal quadrants. We can then recursively call our function on each of these quadrants, until we reach our base-case of a $2*2$ grid. When this base-case occurs, we will be able to fill the remaining board with the L-shaped piece we mentioned earlier. From this, we can re-merge the many $2*2$ grids back into the $2^k * 2^k$ grid, and as such we will have filled every possible space with an L-spaced piece.
 
-Prove that SillySort(L) terminates and correctly sorts its input list of numbers $L$.
-
-    \lstset{caption={A sorting algorithm only used by silly people.}}
-    \lstset{label={lst:alg1}}
-     \begin{lstlisting}[style = Python]
-def sillysort(L):
-    while true:
-        if L is sorted:
-            return L
-        else:
-            compute an arbitrary index i such that L[i] > L[i+1]
-            swap L[i] and L[i+1]
-    \end{lstlisting}
-
-\begin{thm}
-    SillySort eventually terminates and correctly sorts its input list of numbers.
-\end{thm}
-
-\begin{proof}
-    According to the definition of silly sort, it must execute the following steps during each iteration to get closer to fully sorting the input list:
-
+$\hfill \break$
+The specific algorithm we can use to accomplish this is outlined below, assuming we have a board with the top-left piece removed:
+\begin{enumerate}
+    \item If $k = 1$, fill the remaining three pieces of the board with an L-shaped piece, as this is our base-case.
+    \item Otherwise, split the board into 4 equal quadrants, and recursively call our function on each of these quadrants.
     \begin{enumerate}
-        \item Check if the list is sorted, if it is return the list.
-        \item If the list is not sorted, then compute an arbitrary index $i$ such that $L[i] > L[i+1]$.
-        \item Swap $L[i]$ and $L[i+1]$.
+        \item Place an L-shaped piece in the middle of the partitioned board, and fill the remaining 3 pieces with L-shaped pieces.
+        \item Repeat \textit{Step 2} and \textit{Step 2a} until the base-case is achieved.
     \end{enumerate}
-
-    With this, we can derive the base case of this problem, which is when the altered list is completely sorted. When this is the case, the algorithm will terminate. Now, we can explore how to get closer to the base case.
-
-    $\hfill \break$
-    During each iteration of the algorithm, we can assume that the list is not finished being sorted yet, and that it continues. With this in mind, the algorithm will arbitrarily select an index $i$ such that $L[i] > L[i+1]$, and that the two will be swapped in order to get closer to the final sorted list. This is very similar to how bubble sort operates, except instead of going sequentially and ensuring the items are sorted, this will compute the indices arbitrarily which adds additional complexity to the analysis of this algorithm.
-    
-    $\hfill \break$
-    In this way, the best case is $O(n^2)$ for this algorithm when the list is already sorted, as it just needs to verify the list is sorted. The worst case is is $O(..)$ when the list is in reverse, and the average case is the list is in random order.
-
-    $\hfill \break$
-    We can prove that this algorithm correctly sorts a list by introducing an inductive proof, wherein the base step demonstrates the algorithm correctly sorts a list of size $n=3$, and the inductive step demonstrates that the algorithm correctly sorts a list of size $n+1$ given that it correctly sorts a list of size $n$.
-
-    $\hfill \break$
-    The base step can be modelled when the list is a known size, such as $n=4$. We can show this if we let $L = \left\{1, 2, 4, 3\right\}$, in which case the list can be sorted in one iteration. On the first iteration of the silly sort algorithm, it will detect indices 2, 3 are out of order, and swap them. This will result in the list being sorted, and so the algorithm will terminate successfully.
-
-    $\hfill \break$
-    The inductive step can be modelled when the list has an arbitrary size, $n+1$. We know that the algorithm will terminate when the list is sorted, and so we can assume that the list is not sorted. We can also assume that the algorithm will correctly sort a list of size $n-1$ given that it correctly sorts a list of size $n$. With this, we can assume that the algorithm will correctly sort a list of size $n$ given that it correctly sorts a list of size $n-1$. Therefore, the algorithm will process all pairs for which $L[i] > L[i+1]$, and swap them. This will result in the list being procedurally sorted, and so the algorithm will eventually terminate successfully.
-\end{proof}
+\end{enumerate}
 
 \newpage
+\section*{Problem 2}
+You are given an unsorted list L that has $k \geq 0$ pairs of indices $i < j$ such that $L[i] > L[j]$. These are called inverted pairs. Develop an $O(nlogn)$ algorithm that counts the number of inverted pairs (i.e. compute the value k).
 
-\section*{Problem 3 -- Data structures (25\%)}
+$\hfill \break$
+In order to count the number of inverted pairs in a list, we can use a divide-and-conquer approach using a variant of the classic merge sort algorithm. In this way, we will attain an $O(nlogn)$ runtime, and be able to leverage a simple recursive approach.
+
+$\hfill \break$
+To begin, we can recursively split the list in half into smaller sublists. This will be done until we reach a base-case of one item in each sorted list, in which case the sublist will be considered sorted. Now, instead of simply remerging all of the one-item sublists, we must keep the inversion property of this problem in mind. In this way, as we are remerging the sublists, we must check if $L[i] > L[j]$ for each $i$ and $j$ in the sublists. If this is the case, we can increment our counter by 1. Once we have remerged all of the sublists, we will have counted the number of inversions in the original list.
+
+\newpage
+\section*{Problem 3}
+The \textit{best subset problem} is defined as, given a list $\left(x_1, x_2, ..., x_n\right)$ of integers (which can be positive, negative, or zero), find $(i, j)$ such that $x_i + x_{i+1} + ... + x_j$ is maximum for any
+$1 \leq i \leq j \leq n$. For example, if $n = 10$ and the input is $\left(4, -8, -5, 8, -4, 3, 6, -3, 2, -11\right)$ then the output is $x_4 + x_5 + x_6 + x_7 = 8 - 4 + 3 + 6 = 13$.
 
 \begin{enumerate}
-    \item We saw in class the algorithm for building a max-heap
-
-    \lstset{caption={Building a max heap.}}
-    \lstset{label={lst:alg1}}
-     \begin{lstlisting}[style = Python]
-import math
-
-def buildmaxheap(A):
-    A.heapsize = A.length
-    for i in range(int(math.floor(A.length / 2)), 0, -1):
-        maxheapify(A, i)
-    \end{lstlisting}
-
-Consider the following alternative way to build a max-heap
-
-    \lstset{caption={Building a max heap.}}
-    \lstset{label={lst:alg1}}
-     \begin{lstlisting}[style = Python]
-def buildmaxheap2(A):
-    A.heapsize = 1
-    for i in range(2, A.length + 1):
-        maxheapinsert(A, A[i])
-    \end{lstlisting}
-
-    Prove that buildmaxheap and buildmaxheap2 do not always create the same heap by providing a counterexample.
-
-    \begin{center}
-        \includegraphics[height=7.5cm]{heaps.jpeg}
-    \end{center}
-
-    The above example, with \textit{buildmaxheap2} on the left, and \textit{buildmaxheap} on the right, demonstrates the case $\left[1, 2, 3\right]$ for each of the above functions. We can see that the generated results are visibly different with \textit{buildmaxheap2} generating $\left[3, 1, 2\right]$ and \textit{buildmaxheap} generating $\left[3, 2, 1\right]$.
-
-    \item What is the worst case time complexity of buildmaxheap2? Explain your reasoning.
-    \vspace{0.15cm}
-
-    The worst case time complexity of \textit{buildmaxheap2} must be $O(nlogn)$. This is due to the fact that the function \textit{maxheapinsert} has a worst case time complexity of $O(logn)$, and the function is called $n$ times. Therefore, the worst case time complexity of \textit{buildmaxheap2} is $O(nlogn)$.
+    \item Develop an $O(n)$ algorithm for the related problem, best subset middle or BSM. The input to BSM is a list $\left(x_1, x_2, ... , x_n\right)$ of integers (which can be positive, negative, or zero) and the output is the maximum value of $x_i + x_{i+1} + ... + x_j$ such that $[i, j]$ spans $\frac{n}{2}$, in other words, for all possibilities for $i$ and $j$ such that $1 \leq i \leq \frac{n}{2} \leq j \leq n$.
+    \item Design a recursive algorithm for the best subset problem with runtime $O(nlogn)$ that uses the BSM function.
+    \item Argue that your algorithm is indeed correct and prove the runtime is $O(nlogn)$.
+    \item (Extra credit: 5pts) Design an algorithm for the best subset problem that has $O(n)$ runtime. Argue why your algorithm is correct and has $O(n)$ runtime.
 \end{enumerate}
+
+In order to find the \textit{best subset middle}, we can use a dynamic programming approach in order to iterate through the array and compute the maximum subsets on each side. More specifically, we can split the given array into two, and then iterate through both the left and right hand sides of the split. Given these two subarrays, we can compute the maximal subsets for each. Knowing the maximum subset for each side, we can know compute along the middle which we split. In this way, we can see if the maximum of each subarray is between the split of the arrays.
+
+$\hfill \break$
+We are able to use recursion in order to divide and conquer this problem. With this in mind, we can implement a merge sort like algorithm which splits the original array into arrays of length one at the base case. Once they are fully split, we are able to merge them back together in such a way where we can compute the maximum subsets by keeping track of the maximums as they are being remerged.
+
+$\hfill \break$
+This algorithm must be $O(nlogn)$ since it constructed in the same way as a merge sort algorithm. If we compare what the two do, the merge sort algorithm arranges the subarrays it generates to be in order, while this algorithm looks through the subarrays in order to compute the maximum subsets. We can also break down the components of this recursive algorithm in order to prove that it must be $O(nlogn)$. This is because the splitting aspect of the algorithm runs in $O(logn)$ time for each level, and the computational aspect must check all $n$ items at each level. Therefore, the runtime must be $O(nlogn)$.
+
 
 \end{document}

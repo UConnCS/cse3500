@@ -35,187 +35,161 @@
 \setlength{\parindent}{0.0in}
 \setlength{\parskip}{0.05in}
 
-
 % Edit these as appropriate
 \newcommand\course{CSE 3500}
-\newcommand\hwnumber{4}                  % <-- homework number
-\newcommand\release{10/13/2022}    % <-- release date
-\newcommand\due{10/20/2022}        % <-- homework number
+\newcommand\hwnumber{3}                  % <-- homework number
+\newcommand\NetIDa{mfm19005}           % <-- NetID of person #1
 
 \pagestyle{fancyplain}
-\headheight 20pt
-\lhead{mfm19005}
+\headheight 35pt
+\lhead{\NetIDa}
 \chead{\textbf{\Large Homework \hwnumber}}
-\rhead{October 17th, 2022}
+\rhead{\course \\ \today}
 \lfoot{}
 \cfoot{}
 \rfoot{\small\thepage}
 \headsep 1.5em
 
+\newtheorem*{thm}{Theorem}
+
 \begin{document}
 
 \begin{center}
-    \LARGE Suffix Trees, Hashing
+    \LARGE Problem Set
 \end{center}
 
 
-\section*{Problem 0 -- Suffix Trees on multiple strings (25\%)}
-A suffix tree of $m$ strings $(S_1,S_2,\dots,S_m)$ is a suffix tree built from inserting the strings in order: $S_1\$_1$, $S_2\$_2$, $\dots$, $S_m\$_m$ where $\$_1,\dots,\$_m$ are distinct terminating strings.
+\section*{Problem 0 -- Dynamic Programming (25\%)}
+Zoe starts at the top left corner of an $n \times n$ square grid of numbers and must end at the bottom right corner.
+The numbers can be positive or negative. 
+At each step, Zoe can go left, right, or down (but not up), and she can never revisit a square that she has already visited. 
+Find an $O(n^2)$ algorithm to find the maximum sum of numbers Zoe can visit.\\
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+$\hfill \break$
+An $O(n^2)$ algorithm that models this problem utilizes memoization in order to avoid repeated iterations. This algorithm uses a double for-loop in order to fill out an $n \times n$ table in which $T[i][j]$ represents the number of possible move directions that can be taken, given the conditions specified in the problem statement. Further, the algorithm iterates over all of the columns, except for the last one since the only possible move would be moving down for the last column.
+
+$\hfill \break$
+With this, we can iterate down each of the rows in order to compute the number of possible directions for each tile. This can be done by summing the number of possible directions for the tile to the right of the current one, and the tile below the current one. We can do this by going from the bottom up, and assembling the rows one by one. In this case, the bottom row must be all ones, since you can only go right in order to reach the goal - likewise, we can assemble upwards and use that bottom row in order to compute the row above it, and then set the ``below" row to the current row when moving up a level.
+
+$\hfill \break$
+Once the entire table is filled, we can iterate through and compute the maximum sum of numbers that Zoe can visit. This can be done by iterating through the table and summing the numbers in the table, and then comparing the sum to the current maximum sum. If the sum is greater than the current maximum sum, then we can set the maximum sum to the current sum.
+
+$\hfill \break$
+All of these operations will constitute the $O(n^2)$ we are looking for, as the initial construction of the table will cost $O(n^2)$ time, and the computation of the maximum sum will cost $O(n)$ time. Thus, the total time complexity will be $O(n^2)$.
+
+\newpage
+
+\section*{Problem 1 -- Divide and Conquer (25\%)}
+A mad scientist accidentally left her cloning machine on and open while vacationing in Storrs, Connecticut.
+While she was away, a murder of crows managed to get inside her office and use the cloning machine.
+The mad scientist returned from her vacation surprised to have her office full of crows, but excited to test a new hypothesis.
+As is well known, crows are very intelligent birds, and the scientist suspects that one or more crows may have taken advantage of the cloning machine to gain a selective genetic advantage.
+
+We say that two crows are \textit{identical} if we genetically sequence the crows and their DNA is 99.99\% identical.
+The mad scientist has a machine that will determine whether or not two crows are genetically identical, but it is costly to operate so she wants to minimize its use.
+
+The only operation you are allowed to perform is to take two crows and determine if they are genetically identical.
+Develop an $O(n \log n)$ algorithm that, given $n$ crows, determines if there is a set of more than $n/2$ crows that are genetically identical.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+An $O(nlogn)$ equation that models this problem would be a derivation of merge sort, in that we can consider the set of all crows, $\mathbb{C}$, an array of sorts, and the crows being elements in that array. We can then split the array in half until we are left with arrays of two elements. This is one level above the normal terminating-point of a typical merge-sort algorithm. When we are left with two elements per list, we can compare all of the pairs on the final level of the recursive tree, and as such determine if there is a majority by checking for matching pairs.
+
+$\hfill \break$
+By executing this process recursively back up the tree, we are able to determine if the set of $\frac{n}{2}$ genetically identical crows exists for a given sample set. As such, the splitting-aspect of this algorithm constitutes the $O(logn)$ component of the final runtime, and the merging aspect of the algorithm constitutes the $O(n)$ component of the final runtime. Thus, the final runtime of this algorithm is $O(nlogn)$ as $n$ operations must run for each of the $log(n)$ levels.  
+
+\newpage
+
+\section*{Problem 2 -- SillySort (25\%)}
+
+Prove that SillySort(L) terminates and correctly sorts its input list of numbers $L$.
+
+    \lstset{caption={A sorting algorithm only used by silly people.}}
+    \lstset{label={lst:alg1}}
+     \begin{lstlisting}[style = Python]
+def sillysort(L):
+    while true:
+        if L is sorted:
+            return L
+        else:
+            compute an arbitrary index i such that L[i] > L[i+1]
+            swap L[i] and L[i+1]
+    \end{lstlisting}
+
+\begin{thm}
+    SillySort eventually terminates and correctly sorts its input list of numbers.
+\end{thm}
+
+\begin{proof}
+    According to the definition of silly sort, it must execute the following steps during each iteration to get closer to fully sorting the input list:
+
+    \begin{enumerate}
+        \item Check if the list is sorted, if it is return the list.
+        \item If the list is not sorted, then compute an arbitrary index $i$ such that $L[i] > L[i+1]$.
+        \item Swap $L[i]$ and $L[i+1]$.
+    \end{enumerate}
+
+    With this, we can derive the base case of this problem, which is when the altered list is completely sorted. When this is the case, the algorithm will terminate. Now, we can explore how to get closer to the base case.
+
+    $\hfill \break$
+    During each iteration of the algorithm, we can assume that the list is not finished being sorted yet, and that it continues. With this in mind, the algorithm will arbitrarily select an index $i$ such that $L[i] > L[i+1]$, and that the two will be swapped in order to get closer to the final sorted list. This is very similar to how bubble sort operates, except instead of going sequentially and ensuring the items are sorted, this will compute the indices arbitrarily which adds additional complexity to the analysis of this algorithm.
+    
+    $\hfill \break$
+    In this way, the best case is $O(n^2)$ for this algorithm when the list is already sorted, as it just needs to verify the list is sorted. The worst case is is $O(..)$ when the list is in reverse, and the average case is the list is in random order.
+
+    $\hfill \break$
+    We can prove that this algorithm correctly sorts a list by introducing an inductive proof, wherein the base step demonstrates the algorithm correctly sorts a list of size $n=3$, and the inductive step demonstrates that the algorithm correctly sorts a list of size $n+1$ given that it correctly sorts a list of size $n$.
+
+    $\hfill \break$
+    The base step can be modelled when the list is a known size, such as $n=4$. We can show this if we let $L = \left\{1, 2, 4, 3\right\}$, in which case the list can be sorted in one iteration. On the first iteration of the silly sort algorithm, it will detect indices 2, 3 are out of order, and swap them. This will result in the list being sorted, and so the algorithm will terminate successfully.
+
+    $\hfill \break$
+    The inductive step can be modelled when the list has an arbitrary size, $n+1$. We know that the algorithm will terminate when the list is sorted, and so we can assume that the list is not sorted. We can also assume that the algorithm will correctly sort a list of size $n-1$ given that it correctly sorts a list of size $n$. With this, we can assume that the algorithm will correctly sort a list of size $n$ given that it correctly sorts a list of size $n-1$. Therefore, the algorithm will process all pairs for which $L[i] > L[i+1]$, and swap them. This will result in the list being procedurally sorted, and so the algorithm will eventually terminate successfully.
+\end{proof}
+
+\newpage
+
+\section*{Problem 3 -- Data structures (25\%)}
 
 \begin{enumerate}
-    \item Build the suffix tree for BANDANNA\# and SAVANNAH\$.
-    \item Give an algorithm to find the longest common substring of $m$ strings, $S_1,\dots,S_m$ using suffix trees. 
-    \item What is your algorithms runtime? Show your work/give an argument.
-    \item Using your algorithm, what is the longest common substring of BANDANNA\# and SAVANNAH\$?
+    \item We saw in class the algorithm for building a max-heap
+
+    \lstset{caption={Building a max heap.}}
+    \lstset{label={lst:alg1}}
+     \begin{lstlisting}[style = Python]
+import math
+
+def buildmaxheap(A):
+    A.heapsize = A.length
+    for i in range(int(math.floor(A.length / 2)), 0, -1):
+        maxheapify(A, i)
+    \end{lstlisting}
+
+Consider the following alternative way to build a max-heap
+
+    \lstset{caption={Building a max heap.}}
+    \lstset{label={lst:alg1}}
+     \begin{lstlisting}[style = Python]
+def buildmaxheap2(A):
+    A.heapsize = 1
+    for i in range(2, A.length + 1):
+        maxheapinsert(A, A[i])
+    \end{lstlisting}
+
+    Prove that buildmaxheap and buildmaxheap2 do not always create the same heap by providing a counterexample.
+
+    \begin{center}
+        \includegraphics[height=7.5cm]{heaps.jpeg}
+    \end{center}
+
+    The above example, with \textit{buildmaxheap2} on the left, and \textit{buildmaxheap} on the right, demonstrates the case $\left[1, 2, 3\right]$ for each of the above functions. We can see that the generated results are visibly different with \textit{buildmaxheap2} generating $\left[3, 1, 2\right]$ and \textit{buildmaxheap} generating $\left[3, 2, 1\right]$.
+
+    \item What is the worst case time complexity of buildmaxheap2? Explain your reasoning.
+    \vspace{0.15cm}
+
+    The worst case time complexity of \textit{buildmaxheap2} must be $O(nlogn)$. This is due to the fact that the function \textit{maxheapinsert} has a worst case time complexity of $O(logn)$, and the function is called $n$ times. Therefore, the worst case time complexity of \textit{buildmaxheap2} is $O(nlogn)$.
 \end{enumerate}
-
-\subsection*{Part 1}
-
-\begin{figure}[!htb]
-    \centering
-    \includegraphics[width=0.8\textwidth]{suffix_tree.jpeg}
-    \caption{Suffix Tree for BANDANNA\# and SAVANNAH\$}
-    \label{fig:suffix_tree}
-\end{figure}
-
-\newpage
-\subsection*{Part 2}
-
-First, we must build a generalized suffix tree to contain the $m$ strings. Next, we must understand what the LCS of $m$ strings as represented by a suffix tree actually means. Since a suffix tree represents every suffix for the inserted strings, the LCS of $m$ strings would be represented by the path to the deepest internal node. This would correctly model the LCS of $m$ strings since the longest path to this node represents the longest common sequence shared by the given $m$ strings.
-
-$\hfill \break$
-Thus, we will utilize a depth-first-search in order to locate the path to the deepest internal node for the reasoning above. More specifically, we can start at the root node and traverse all possible paths of the suffix tree from the left to right. While going down the tree, we keep track of the number of edges required to hit a specific node, and update that number as we go along. Additionally, we also keep track of each node and how many edges are needed to hit it. We do this until we hit a leaf node, meaning the node has no further children. Once we hit a leaf node, we compare against the last longest path and update it if necessary, so that we know in the end which path is the longest.
-
-$\hfill \break$
-After recording the path, we can backtrack up one node and check if there are any additional paths to traverse, if there are, we repeat the same process to explore them all. If there are not, we go back up and repeat this process until we explore all paths in the tree. Once we have explored all paths, we can return the longest path we found.
-
-\subsection*{Part 3}
-
-The worst-case runtime of this algorithm is bounded under the sum of the number of suffixes for all of the strings. This can be represented as $O(m)$, where $m$ refers to $\sum_{i=0}^m \lvert S_i \rvert$, where the cardinality of $S_i$ refers to the string's number of suffixes. This is the case because we must traverse all possible paths in the suffix tree, and each path represents a suffix. Thus, the runtime is bounded by the number of suffixes for all of the strings.
-
-\subsection*{Part 4}
-
-In the case of BANDANNA\# and SAVANNAH\$, the longest common substring is ANNA, which can be seen as the deepest internal node in Figure 1.
-
-\newpage
-\section*{Problem 1 -- Reversible substrings (25\%)}    
-    Let $S$ be a string of length $m$ and a \textit{substring} be a contiguous sequence of characters from $S$ identified by a tuple $S_{(i,l)}$ for starting index $i$ and length $l$.  
-    Let the reverse of a string $S[0] S[1] \dots S[m-2] S[m-1]$ be $S[m-1]S[m-2] \dots S[1] S[0]$ denoted $S^-$.
-    A \textit{reversible substring} is a substring  where $S_{(i,l)}=S^-_{(m-(i+l),l)}$. 
-    Consider this example in Python:
-    \begin{verbatim}
->>> S="PPABCDCBTTHMN"
->>> i=3
->>> l=5
->>> m=len(S)
->>>
->>> (S[::-1])[m-(i+l):m-(i+l)+l]
-'BCDCB'
->>> S[i:(i+l)]
-'BCDCB'
-    \end{verbatim}
-    Note that in the previous example we convert the length $l$ into an ending index for python.
-    Intuitively, a reversible substring is a substring that is the same in the forward and reverse directions.
-
-\begin{enumerate}
-    \item Write an algorithm using suffix trees that computes the longest reversible substring of a string $S$. 
-\textit{Hint: Think about using a suffix tree for multiple strings.}
-    \item What is your algorithms runtime? Show your work/give an argument.
-    \item Use your algorithm to find the longest reversible substring of the string RACECARS.
-\end{enumerate}
-
-\subsection*{Part 1}
-
-Similarly to Question 0, we are able to utilize a suffix tree in order to find the LCS of the strings. However, in this case, we are looking for the longest reversible substring given a string $S$. In order to accomplish this, we can utilize a suffix tree and insert the strings $S$, and its reverse $S_r$. We will begin by creating a suffix tree containing these two strings.
-
-$\hfill \break$
-Now, with such a suffix tree created, we are able to utilize the same algorithm as Question 0, in which we utilize a depth-first-search to find the longest path to the deepest internal node. We are able to do this since the longest reversible substring for $S$ is nothing more than the longest common substring between $S$ and $S_r$. Thus, the deepest internal node in the suffix tree between $S$ and $S_r$ represents the longest reversible substring for $S$.
-
-\subsection*{Part 2}
-
-The algorithm's we devised above follows the same rules as the first problem, but with two strings. Since the two strings are the same, just reversed, the number of suffixes must be the same for $S$ and $S_r$. Thus, the runtime of this algorithm would be $O(n)$ since the algorithm is bounded under the amount of suffixes, which in this case is the same for both, leaving us with $2n$ suffixes, which is $O(n)$.
-
-\subsection*{Part 3}
-
-Using our algorithm, the longest reversible substring for RACECARS is RACECAR.
-
-\newpage
-\section*{Problem 2 -- Suffix Arrays (25\%)}
-\begin{enumerate}
-    \item Build the suffix array for string ``repetitive''.
-    \item Recall the longest common prefix array, an array of size $m-1$ that stores the length of the longest common prefix for each pair of adjacent strings. 
-Build the LCP array for ``repetitive''.
-    \item Describe an algorithm for finding a substring pattern $P$ using suffix and LCP arrays.
-    \item Consider this algorithm and the case where the alphabet is large, say, $O(m)$. Would you prefer to use suffix trees or suffix arrays? Why?
-\end{enumerate}
-
-\subsection*{Part 1 \& 2}
-
-\begin{figure*}[!htb]
-    \centering
-    \begin{minipage}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{suffix_array.png}
-        \caption{Suffix Array for ``repetitive''}
-        \label{fig:suffix_array}
-    \end{minipage}%
-    \begin{minipage}[t]{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{lcp_array.png}
-        \caption{LCP Array for ``repetitive''}
-        \label{fig:lcp_array}
-    \end{minipage}
-\end{figure*}
-
-\newpage
-\subsection*{Part 3}
-
-In order to find a substring pattern $P$ using suffix and LCP arrays, we can first construct the appropriate suffix and LCP arrays for a larger string $S$. Once we have the suffix and LCP arrays for $S$, we are able to utilize a binary search to determine the general range of indices for which $P$ can be found in $S$.
-
-$\hfill \break$
-By definition, an LCP array stores the length of longest common prefix for each pair of adjacent strings. Thus, we can utilize our LCP array for $S$ in order to determine the number of occurrences of $P$ in the larger string $S$. We can accomplish this by checking the LCP array's entries around the value we received from the binary search. From this, we can start at the index our binary search resulted in, and from here can move up and down to see if the LCP values are non-zero. If they are, this means that the value in the current index is the prefix of the next index's value. We can then repeat the process until we reach an LCP value that is less than the length of $P$. During this process, we will keep track of the number of occurrences by using a counter. This will give us the number of occurrences of $P$ in $S$. 
-
-\subsection*{Part 4}
-
-Suffix arrays would be preferable in a case where the alphabet is large. This is primarily due to the fact that suffix arrays are far easier to traverse due to them being sorted lexicographically and thus being able to utilize a binary search. This is in contrast to suffix trees, which are not sorted and thus would require a linear search in order to find the appropriate substring. Thus, in a case where the alphabet is large, we would prefer to use suffix arrays since they are far easier to traverse.
-
-\newpage
-\section*{Problem 3 -- Hashing (25\%)}
-Consider the following simple hash function $h$ for mapping keys $z_j \in Z$ for $j=1,\dots ,n$ to array indices $\{1, \dots  m\}$.
-For each key $z \in Z$, $h(z)=i$ with probability $1/m$ where $i=1, \dots , m$.
-What is the expected number of keys such that $h(a)=h(b)$ over all keys $a \neq b$?
-\textit{Hint: you want to define a similar random variable representing collisions as we did in Lecture 22 or Chapter 1.5 of the Algorithms textbook.}
-
-$\hfill \break$
-Let $X$ be a random variable that indicates the number of collisions between two keys $i$ and $j$ in the hash table. We can define $X$ as follows:
-
-\begin{equation*}
-    X = \begin{cases}
-        1 & \text{if $i=j$} \\
-        0 & \text{if $i \neq j$}
-    \end{cases}
-\end{equation*}
-
-$\hfill \break$
-Further, we are given the probability of the collision, $P(h(e_i) = h(e_j)) = \frac{1}{m}$. Based on this information, we can construct the following expression to model the collision event $X_{ij}$:
-
-\begin{equation*}
-    X = \sum_{i=1}^{n} \sum_{j=i+1}^{n} X_{ij}
-\end{equation*}
-
-$\hfill \break$
-We can then compute the expectation of $X$ in order to determine the expected number of keys such that $h(a) = h(b)$ over all keys $a \neq b$.
-
-\begin{equation*}
-    E[X] = E\left[\sum_{i=1}^{n} \sum_{j=i+1}^{n} X_{ij}\right] \Rightarrow \sum_{i=1}^{n} \sum_{j=i+1}^{n} E\left[X_{ij}\right]
-\end{equation*}
-
-$\hfill \break$
-However, we since already know the value of $E\left[X_{ij}\right] = \frac{1}{m}$, we can substitute it into the above equation and find the expected number of collisions:
-
-\begin{align*}
-    E[X] &= \sum_{i=1}^{n} \sum_{j=i+1}^{n} \frac{1}{m}\\\\
-    &= \frac{n(n-1)}{2m}
-\end{align*}
 
 \end{document}
